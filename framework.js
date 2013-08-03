@@ -1,20 +1,39 @@
 ffw = function(selector){
     // Регулярка проверяющая селектор (.class или #id)
-    var rquickExpr = /\.([\w]*)|#([\w]*)/;
-    var coin;
+    var rquickExpr = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,
+        checkAttr=/\[.*\]/g,
+        coin = rquickExpr.exec(selector),
+        attrMatch = selector.match(checkAttr);
 
     // Проверка, если селектор — строка
     if (typeof selector === "string"){
-        coin = rquickExpr.exec(selector);
 
-        // В случае с #id
-        if(coin[0] && coin[2]){
-            var context = document.getElementById(coin[2]);
-            context = new Array(context);
-        }
-        // В случае с .class
-        if(coin[0] && coin[1]){
-            var context = document.getElementsByClassName(coin[1]);
+        // Поиск по селектору
+        if(attrMatch == null){
+            // В случае с #id
+            if(coin[0] && coin[1]){
+                var context = document.getElementById(coin[1]);
+                context = new Array(context);
+                console.log(context);
+            }
+
+            // В случае с .class
+            if (coin[0] && coin[3]){
+                var context = document.getElementsByClassName(coin[3]);
+                console.log(context);
+            }
+
+            // В случае с tag
+            if(coin[0] && coin[2]){
+                var context = document.querySelectorAll(coin[2]);
+                console.log(context);
+            }
+        } else {
+            // Поиск если указан аттрибут
+            // Вырезаем [значение] из селектора
+            selector = selector.replace(attrMatch,'');
+            var context = document.querySelectorAll(selector + attrMatch);
+            console.log(context);
         }
     }
 
